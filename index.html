@@ -448,7 +448,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
   <section id="menu">
     <div class="menu-inner">
       <div class="menu-top">
-        <span class="ref">REV 1.22</span>
+        <span class="ref">REV 1.23</span>
         <div class="right">
           <button class="icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
           <button class="icon" id="hap" aria-label="Vibration on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path class="wave" d="M4 8v8M20 8v8"/></svg></button>
@@ -1017,7 +1017,7 @@ var cloud={doc:null,state:'off',at:0,t:0,busy:false,again:false,
     this.busy=false;paintCloud();if(this.again){this.again=false;this.push()}}};
 function paintCloud(){
   const t={off:'',sync:'☁ SYNCING',ok:'☁ SAVED',error:'☁ OFFLINE'}[cloud.state]||'';
-  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.22'+(t?' · '+t:'');
+  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.23'+(t?' · '+t:'');
   const c=document.getElementById('cloudLine');if(c)c.textContent=cloudText()}
 function cloudText(){return cloud.state==='ok'?`Saved to your account ✓ Last saved ${new Date(cloud.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Open the game signed in on any device and your progress follows you.`
   :cloud.state==='sync'?'Syncing with your account…'
@@ -1075,7 +1075,11 @@ const THEMES=[
     pal:{board:'#22151e',sock:'#2d1b27',lock:'#271721',glass:'#321e2c',copper:'#c38c6c',hi:'#f5cab8',accent:'#ff9fc4'}},
   {id:'starlight',logo:['#7f8cff','#b9a6ff','#e9e4ff','#6fd0ff'],name:'Starlight',desc:'Win 5 ⚡ gold medals in Timed mode',goal:()=>[Object.keys(meta.gold||{}).length,5],amb:'stars',
     pal:{board:'#0a0a18',sock:'#121228',lock:'#0e0e21',glass:'#171733',copper:'#8f86c9',hi:'#d6d1ff',accent:'#b9a6ff'}}];
-const themeOpen=k=>{const [a,b]=k.goal();return a>=b};
+// Dev mode: switched on by typing DEV_CODE into Restore. Stored on this device only (not in saves or backup codes).
+const DEV_CODE='LWDEV-SPARK';
+var DEV={on:false,open:false,themes:false};try{Object.assign(DEV,JSON.parse(localStorage.getItem('livewire.dev')||'{}'))}catch(e){}
+function saveDev(){try{localStorage.setItem('livewire.dev',JSON.stringify(DEV))}catch(e){}}
+const themeOpen=k=>{if(DEV.on&&DEV.themes)return true;const [a,b]=k.goal();return a>=b};
 let THEME=THEMES[0];
 function pickTheme(){const k=THEMES.find(x=>x.id===meta.theme);THEME=k&&themeOpen(k)?k:THEMES[0]}
 function unlockedNow(){return THEMES.filter(themeOpen).map(k=>k.id).concat(SKINS.filter(k=>totalStars()>=k.need).map(k=>'b:'+k.id))}
@@ -1426,7 +1430,7 @@ function renderPicker(){
   $('#pstars').textContent=`★ ${sectorStars(viewSector)}/30`;
   const g=$('#grid');g.innerHTML='';
   for(let k=0;k<10;k++){
-    const i=viewSector*10+k,st=progress[i]||0,open=i<=nx||(progress[i-1]||0)>0;
+    const i=viewSector*10+k,st=progress[i]||0,open=(DEV.on&&DEV.open)||i<=nx||(progress[i-1]||0)>0;
     const b=document.createElement('button');
     b.style.setProperty('--c',open?CELLC[k]:'');
     b.className='lv'+(open?'':' locked')+(i===nx?' cur':'')+(isBoss(i)?' boss':isMini(i)?' mini':'');
@@ -1467,6 +1471,7 @@ function openPause(){
     <button class="btn primary pzgo" id="pzResume"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>Resume</button>
     <div class="btns2" style="margin-top:0"><button class="btn" id="pzRestart"><svg viewBox="0 0 24 24"><path d="M19 12.5A7 7 0 1 1 16.9 7"/><path d="M17.6 3.4v4.2h-4.2"/></svg>Restart</button>
       <button class="btn" id="pzMenu"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/></svg>Menu</button></div>
+    ${DEV.on?`<div class="btns2" style="margin-top:0"><button class="btn" id="pzSolve">🛠 Solve</button><button class="btn" disabled>Min ${par} · 3★ ≤ ${tg?tg[0]:par}</button></div>`:''}
     <div class="pzq">${qt('sound','Sound',soundOn)}${qt('music','Music',musicOn)}${qt('haptics','Vibrate',haptic.on)}${L.daily?'':qt('timed','Timed',meta.timed)}</div>
     <p class="pznote">${L.daily?'The clock is stopped. ':''}Tap outside the panel to resume${L&&!L.daily?' · Timed mode applies from the next board':''}</p></div>`,()=>{
     $('#sheet').classList.add('pzm');$('.pzc h4').textContent=L.name||'';
@@ -1475,6 +1480,7 @@ function openPause(){
     let armed=0;$('#pzRestart').onclick=e=>{if(moves>0&&!armed){armed=setTimeout(()=>{armed=0;const b=document.getElementById('pzRestart');if(b)b.lastChild.textContent='Restart'},2500);e.currentTarget.lastChild.textContent='Tap again';sfx.uiTick&&sfx.uiTick(2);return}
       clearTimeout(armed);quit();if(L.daily)startDaily();else startLevel(L.idx)};
     $('#pzMenu').onclick=()=>{quit();toMenu()};
+    if(DEV.on)$('#pzSolve').onclick=()=>{closeSheet();L.tiles.forEach(t=>{if(t.t==='wire'&&!t.locked){t.rot=0;t.disp=0}if(t.t==='switch'&&t.relay==null)t.on=t.solOn});afterChange(0)};
     bindToggles(openPause);
   });
 }
@@ -1549,8 +1555,9 @@ function openSettings(){
     +row('timed','Timed mode','Race a bar to bronze, silver and gold medals on every board. Gold earns a ⚡ for the speed leaderboard. Daily challenges keep their own rules.',!!meta.timed)
     +row('symbols','Colour symbols','Letters on batteries and bulbs (R, B, G, P, Y, C, W) for colour-blind play',!!meta.symbols)
     +`<div class="sh-label"><span>YOUR PROGRESS</span><span></span></div><p class="lbnote" id="cloudLine"></p>
-      <div class="btns2"><button class="btn" id="bkBtn">Backup code</button><button class="btn" id="rsBtn">Restore</button></div>`,
-  ()=>{bindToggles(openSettings);$('#cloudLine').textContent=cloudText();$('#bkBtn').onclick=openBackup;$('#rsBtn').onclick=openRestore});
+      <div class="btns2"><button class="btn" id="bkBtn">Backup code</button><button class="btn" id="rsBtn">Restore</button></div>`
+    +(DEV.on?`<div class="sh-label"><span>DEV</span><span></span></div><div class="btns2"><button class="btn" id="devBtn">🛠 Dev tools</button></div>`:''),
+  ()=>{bindToggles(openSettings);$('#cloudLine').textContent=cloudText();$('#bkBtn').onclick=openBackup;$('#rsBtn').onclick=openRestore;if(DEV.on)$('#devBtn').onclick=openDev});
 }
 $('#gear').onclick=openSettings;
 function openBackup(){const code=backupCode();
@@ -1563,9 +1570,30 @@ function openRestore(){
   openSheet('Restore progress',`<p class="lbnote">Paste a backup code. It's combined with what's already here, so you keep the best of both and nothing gets lost.</p>
     <textarea class="sharetxt" id="rsTxt" aria-label="Paste backup code" placeholder="LW1-…" style="height:110px;word-break:break-all"></textarea>
     <p class="lbnote" id="rsMsg" role="status"></p><div class="btns2"><button class="btn primary" id="rsGo">Restore</button></div>`,()=>{
-    $('#rsGo').onclick=()=>{let d;try{d=readCode($('#rsTxt').value)}catch(e){$('#rsMsg').textContent='That code doesn\u2019t look right. Copy the whole thing, starting with LW1-.';sfx.wrong();return}
+    $('#rsGo').onclick=()=>{if($('#rsTxt').value.trim().toUpperCase()===DEV_CODE){DEV.on=true;saveDev();sfx.uiSelect();openDev();return}
+      let d;try{d=readCode($('#rsTxt').value)}catch(e){$('#rsMsg').textContent='That code doesn\u2019t look right. Copy the whole thing, starting with LW1-.';sfx.wrong();return}
       const before=totalStars();applySave(mergeSave({progress,meta},{progress:d.progress,meta:d.meta||{}}));save();saveMeta();
       $('#rsMsg').textContent=`Restored ✓ You now have ★ ${totalStars()} (was ★ ${before}). Continue is at level ${nextLevel()+1}.`;sfx.uiSelect();confetti.go(80)}})}
+function openDev(){
+  const row=(k,title,sub)=>`<button class="setrow" role="switch" aria-checked="${!!DEV[k]}" data-dk="${k}"><span><b>${title}</b><span>${sub}</span></span><i class="sw2"></i></button>`;
+  openSheet('Dev tools',`<p class="lbnote">Only on this device. Not saved in backup codes.</p>
+    <div class="sh-label"><span>JUMP</span><span></span></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><input class="sharetxt" id="dvN" type="number" min="1" max="500" inputmode="numeric" placeholder="Board 1-500" style="height:52px;min-height:0;flex:1;min-width:0;margin:0;padding:0 12px;font-size:16px;resize:none"><button class="btn primary" id="dvGo" style="white-space:nowrap;flex:none">Play board</button></div>
+    ${row('open','Open every board','Pick any board in the level picker')}${row('themes','Unlock every theme','Try all the worlds without earning them')}
+    <div class="sh-label"><span>PROGRESS</span><span></span></div>
+    <div class="btns2"><button class="btn" id="dvHints">+10 hints</button><button class="btn" id="dvDaily">Replay today's daily</button></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><input class="sharetxt" id="dvS" type="number" min="1" max="500" inputmode="numeric" placeholder="Up to board" style="height:52px;min-height:0;flex:1;min-width:0;margin:0;padding:0 12px;font-size:16px;resize:none"><button class="btn" id="dvStar" style="white-space:nowrap;flex:none">3★ up to here</button></div>
+    <p class="lbnote">In a board, the pause menu gets a Solve button and shows the minimum moves.</p>
+    <div class="btns2"><button class="btn" id="dvOff">Turn dev mode off</button></div><p class="lbnote" id="dvMsg" role="status"></p>`,()=>{
+    const msg=t=>{$('#dvMsg').textContent=t;sfx.uiSelect()};
+    document.querySelectorAll('[data-dk]').forEach(b=>b.onclick=()=>{const k=b.dataset.dk;DEV[k]=!DEV[k];saveDev();b.setAttribute('aria-checked',DEV[k]);
+      if(k==='themes'){pickTheme();menuColours&&menuColours()}if(typeof renderMenu==='function')renderMenu();sfx.uiSelect()});
+    $('#dvGo').onclick=()=>{const n=Math.round(+$('#dvN').value);if(!(n>=1&&n<=500)){msg('Pick a board from 1 to 500.');return}closeSheet();startLevel(n-1)};
+    $('#dvHints').onclick=()=>{meta.hints+=10;saveMeta();msg(`Hints: ${meta.hints}`)};
+    $('#dvDaily').onclick=()=>{const k=dailyPlan().key;delete meta.daily.stars[k];if(meta.daily.results)delete meta.daily.results[k];saveMeta();msg('Today\u2019s daily is fresh again (streak unchanged).')};
+    $('#dvStar').onclick=()=>{const n=Math.round(+$('#dvS').value);if(!(n>=1&&n<=500)){msg('Pick a board from 1 to 500.');return}
+      for(let i=0;i<n;i++)progress[i]=3;save();msg(`Boards 1 to ${n} now have 3 stars (★ ${totalStars()}).`)};
+    $('#dvOff').onclick=()=>{DEV.on=false;saveDev();pickTheme();closeSheet();toast('Dev mode off')}})}
 $('#dailyBtn').onclick=openDaily;
 // Share: a spoiler-free result card for the daily challenge (Wordle-style), copied or shared as text.
 function shareText(k){
