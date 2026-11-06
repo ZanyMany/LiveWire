@@ -448,7 +448,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
   <section id="menu">
     <div class="menu-inner">
       <div class="menu-top">
-        <span class="ref">REV 1.23</span>
+        <span class="ref">REV 1.24</span>
         <div class="right">
           <button class="icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
           <button class="icon" id="hap" aria-label="Vibration on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path class="wave" d="M4 8v8M20 8v8"/></svg></button>
@@ -1017,7 +1017,7 @@ var cloud={doc:null,state:'off',at:0,t:0,busy:false,again:false,
     this.busy=false;paintCloud();if(this.again){this.again=false;this.push()}}};
 function paintCloud(){
   const t={off:'',sync:'☁ SYNCING',ok:'☁ SAVED',error:'☁ OFFLINE'}[cloud.state]||'';
-  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.23'+(t?' · '+t:'');
+  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.24'+(t?' · '+t:'');
   const c=document.getElementById('cloudLine');if(c)c.textContent=cloudText()}
 function cloudText(){return cloud.state==='ok'?`Saved to your account ✓ Last saved ${new Date(cloud.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Open the game signed in on any device and your progress follows you.`
   :cloud.state==='sync'?'Syncing with your account…'
@@ -1492,7 +1492,9 @@ function bindToggles(redraw){document.querySelectorAll('.setrow,.qt').forEach(b=
   if(k==='music'){setMusic(!musicOn);sfx.uiToggle(musicOn)}
   if(k==='timed'){meta.timed=!meta.timed;saveMeta();paintTimed();sfx.uiToggle(meta.timed)}
   if(k==='symbols'){meta.symbols=!meta.symbols;saveMeta();sfx.uiToggle(meta.symbols)}
-  redraw()})}
+  // flip the switch in place (no re-opening the panel, so nothing flashes)
+  const on={sound:soundOn,music:musicOn,haptics:haptic.on,timed:!!meta.timed,symbols:!!meta.symbols}[k];
+  document.querySelectorAll(`.setrow[data-k="${k}"],.qt[data-k="${k}"]`).forEach(x=>x.setAttribute(x.classList.contains('qt')?'aria-pressed':'aria-checked',on))})}
 $('#sheetClose').onclick=closeSheet;
 $('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet()});
 addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('#sheet').hidden){sfx.uiClose();closeSheet()}else if(L&&!$('#game').hidden&&!won){sfx.uiOpen();openPause()}});
