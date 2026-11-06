@@ -91,6 +91,8 @@ Everything lives in `index.html`:
 | `assets/icons/icon-maskable-512.png` | 512×512 | Android adaptive icon with a safe margin |
 | `assets/icons/apple-touch-icon.png` | 180×180 | iPhone "Add to Home Screen" icon |
 | `assets/icons/favicon.ico`, `favicon-32.png` | 16–48 | Browser tab icon |
+| `assets/social/profile-picture-1080.png` | 1080×1080 | Profile picture for TikTok, Instagram and YouTube (art kept inside the round crop) |
+| `assets/icons/make_icon.py` | | Redraws the icon (pinwheel of red, purple, blue and green traces into a white-hot bulb) |
 | `assets/social-preview.png` | 1280×640 | GitHub social preview (Settings → Social preview) and link previews |
 | `assets/screenshots/*.png` | 1290×2796 | Raw in-game screenshots at iPhone 6.7" App Store size |
 | `assets/store/*.png` | 1290×2796 | Captioned App Store screenshots, ready to upload |
