@@ -65,7 +65,11 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
 .logo .l2{display:block;white-space:nowrap}
 .logo .l2 span{display:inline-block;text-shadow:0 0 24px currentColor}
 .c-r{color:var(--g1,var(--red))}.c-a{color:var(--g2,var(--amber))}.c-p{color:var(--g3,var(--purple))}.c-b{color:var(--g4,var(--blue))}
-.logo .l2 span{transition:color 1.2s ease,text-shadow 1.2s ease}
+.logo .l2 span{transition:color 1.2s ease,text-shadow 1.2s ease,opacity 1.2s ease}
+.logo .l2 span.off{opacity:.16;text-shadow:none;animation:offflick 7s infinite}
+.logo .l2 span.off:nth-child(3){animation-delay:-2.3s}.logo .l2 span.off:nth-child(4){animation-delay:-4.6s}
+@keyframes offflick{0%,86%,100%{opacity:.16;text-shadow:none}87%{opacity:.5;text-shadow:0 0 18px currentColor}88%{opacity:.16}90%{opacity:.4;text-shadow:0 0 12px currentColor}91%{opacity:.16}}
+@media (prefers-reduced-motion:reduce){.logo .l2 span.off{animation:none}}
 .flicker{animation:flick 5.5s infinite}
 @keyframes flick{0%,90%,100%{opacity:1}91%{opacity:.2}92%{opacity:1}94%{opacity:.35}95%{opacity:1}}
 .trace{height:6px;border-radius:3px;background:var(--copper);position:relative;overflow:hidden;width:min(100%,380px);margin-top:4px}
@@ -443,7 +447,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
   <section id="menu">
     <div class="menu-inner">
       <div class="menu-top">
-        <span class="ref">REV 1.15</span>
+        <span class="ref">REV 1.16</span>
         <div class="right">
           <button class="icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
           <button class="icon" id="hap" aria-label="Vibration on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path class="wave" d="M4 8v8M20 8v8"/></svg></button>
@@ -1009,7 +1013,7 @@ var cloud={doc:null,state:'off',at:0,t:0,busy:false,again:false,
     this.busy=false;paintCloud();if(this.again){this.again=false;this.push()}}};
 function paintCloud(){
   const t={off:'',sync:'☁ SYNCING',ok:'☁ SAVED',error:'☁ OFFLINE'}[cloud.state]||'';
-  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.15'+(t?' · '+t:'');
+  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.16'+(t?' · '+t:'');
   const c=document.getElementById('cloudLine');if(c)c.textContent=cloudText()}
 function cloudText(){return cloud.state==='ok'?`Saved to your account ✓ Last saved ${new Date(cloud.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Open the game signed in on any device and your progress follows you.`
   :cloud.state==='sync'?'Syncing with your account…'
@@ -1676,11 +1680,20 @@ function logoPalette(n){
   const mixHex=(a,b,t)=>'#'+[1,3,5].map(i=>Math.round(parseInt(a.slice(i,i+2),16)*(1-t)+parseInt(b.slice(i,i+2),16)*t).toString(16).padStart(2,'0')).join('');
   const stops=n<31?['#ff4f45','#ffa25e']:n<41?['#ff5a4e','#3fa9ff']:n<71?['#ff5a4e','#b46cff','#3fa9ff']:['#ff5a4e','#b46cff','#3fa9ff','#3ddc84'];
   return [0,1,2,3].map(k=>{const p=k/3*(stops.length-1),i=Math.min(stops.length-2,Math.floor(p));return mixHex(stops[i],stops[i+1],p-i)})}
-// The menu's colours (logo, sector cells, rank bar, background pulses) come from one palette:
-// the chosen theme's, or for Circuit the power colours you've unlocked so far.
+// The menu's colours come from one palette: the chosen theme's, or for Circuit only the power colours you've
+// discovered. Each WIRE letter stands for one power colour; letters you haven't discovered yet sit dark and
+// flicker faintly, like a neon tube waiting for power.
+const LOGO_COLS=[['#ff5a4e',1],['#b46cff',41],['#3fa9ff',31],['#3ddc84',71]];   // W I R E: red, purple, blue, green
 function menuColours(){pickTheme();
-  const pal=THEME.logo||logoPalette(nextLevel()+1),st=document.documentElement.style;
-  pal.forEach((c,k)=>st.setProperty('--g'+(k+1),c));CELLC=cellCols(pal);PULSE=[...new Set(pal)]}
+  const st=document.documentElement.style,letters=document.querySelectorAll('.logo .l2>span'),n=nextLevel()+1;
+  let pal,lit;
+  if(THEME.logo){pal=THEME.logo;lit=[1,1,1,1]}
+  else{lit=LOGO_COLS.map(([c,at])=>n>=at?1:0);pal=LOGO_COLS.map(([c])=>c)}
+  letters.forEach((el,k)=>{el.style.color=pal[k];el.classList.toggle('off',!lit[k])});
+  const found=pal.filter((c,k)=>lit[k]),fill=k=>found[k%found.length];
+  [0,1,2,3].forEach(k=>st.setProperty('--g'+(k+1),fill(k)));
+  CELLC=THEME.logo?cellCols(pal):[...Array(10)].map((_,k)=>{const c=found[Math.floor(k*found.length/10)],bl=Math.ceil(10/found.length),j=k%bl;return mixHex(c,'#ffffff',bl>1?j/(bl-1)*.22:0)});
+  PULSE=[...new Set(found)]}
 function sizeBg(){
   const w=innerWidth,h=innerHeight,d=Math.min(devicePixelRatio||1,2);
   if(w===bgW&&h===bgH)return;bgW=w;bgH=h;bg.width=w*d;bg.height=h*d;bctx.setTransform(d,0,0,d,0,0);
