@@ -448,7 +448,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
   <section id="menu">
     <div class="menu-inner">
       <div class="menu-top">
-        <span class="ref">REV 1.20</span>
+        <span class="ref">REV 1.22</span>
         <div class="right">
           <button class="icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
           <button class="icon" id="hap" aria-label="Vibration on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path class="wave" d="M4 8v8M20 8v8"/></svg></button>
@@ -675,6 +675,9 @@ function tryGen(idx,P,r){
     if(P.green&&k===0&&!cols.includes(4))cols[0]=4;
     if(P.distinct){const m=c=>c.reduce((a,b)=>a|b,0),used=new Set(nets.map(x=>m(x.cols)));
       for(let t=0;t<6&&used.has(m(cols));t++)cols=shuffle(P.colors.slice(),r).slice(0,r()<.5?2:1)}
+    // variety: before every circuit has its own colour (levels 32-90), a board never ends up all one colour
+    if(!P.distinct&&k===nn-1&&nn>1&&P.colors.length>1){const all=new Set(nets.flatMap(x=>x.cols).concat(cols));
+      if(all.size===1){const o=P.colors.filter(c=>!all.has(c));cols=[o[Math.floor(r()*o.length)]]}}
     nets.push({id:k,cols,src:[],bulbs:[]});
   }
   const bcount=nets.map(()=>1);for(let k=nn;k<P.bulbs;k++)bcount[Math.floor(r()*nn)]++;
@@ -1014,7 +1017,7 @@ var cloud={doc:null,state:'off',at:0,t:0,busy:false,again:false,
     this.busy=false;paintCloud();if(this.again){this.again=false;this.push()}}};
 function paintCloud(){
   const t={off:'',sync:'☁ SYNCING',ok:'☁ SAVED',error:'☁ OFFLINE'}[cloud.state]||'';
-  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.20'+(t?' · '+t:'');
+  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.22'+(t?' · '+t:'');
   const c=document.getElementById('cloudLine');if(c)c.textContent=cloudText()}
 function cloudText(){return cloud.state==='ok'?`Saved to your account ✓ Last saved ${new Date(cloud.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Open the game signed in on any device and your progress follows you.`
   :cloud.state==='sync'?'Syncing with your account…'
@@ -1705,7 +1708,7 @@ function menuColours(){pickTheme();
   CELLC=THEME.logo?cellCols(pal):[...Array(10)].map((_,k)=>{const c=found[Math.floor(k*found.length/10)],bl=Math.ceil(10/found.length),j=k%bl;return mixHex(c,'#ffffff',bl>1?j/(bl-1)*.22:0)});
   PULSE=[...new Set(found)]}
 function sizeBg(){
-  const w=innerWidth,h=innerHeight,d=Math.min(devicePixelRatio||1,2);
+  const w=innerWidth,h=innerHeight,d=Math.min(devicePixelRatio||1,1.5);   // soft decorative layer: no need for full sharpness
   if(w===bgW&&h===bgH)return;bgW=w;bgH=h;bg.width=w*d;bg.height=h*d;bctx.setTransform(d,0,0,d,0,0);
   const G=26,cols=Math.ceil(w/G)+1,rows=Math.ceil(h/G)+1,used=new Set(),r=rng(7);paths=[];
   const count=Math.round(w*h/9000);
@@ -1726,8 +1729,10 @@ function sizeBg(){
 }
 addEventListener('resize',()=>sizeBg());
 const t0b=t=>performance.now()/1000;   // ambience runs on real time even when traces are slowed
+let bgLast=0;
 function drawBg(t){
   const inGame=$('#menu').hidden;if(inGame&&$('#game').hidden)return;
+  if(t-bgLast<(inGame?62:30))return;bgLast=t;   // slow drifting traces: ~15 fps behind a board, ~30 on the menu
   bctx.clearRect(0,0,bgW,bgH);bctx.save();if(inGame){bctx.globalAlpha=.42;t*=.5}
   bctx.lineCap='round';bctx.lineJoin='round';
   for(const q of paths){
@@ -1859,8 +1864,9 @@ $('#undoBtn').onclick=undo;$('#hintBtn').onclick=useHint;
 // tighten until level 150, where 3 stars means matching par exactly.
 function starTargets(B,p){
   if(B.daily)return [p,p+Math.ceil(p*.5)];
-  const sl=Math.max(0,.6-(B.idx+1)/250),three=p+Math.ceil(p*sl);
-  return [three,three+Math.ceil(p*(.5+sl))];
+  // p is the real minimum for this scramble: three stars within 3 extra moves, two stars a little looser
+  const three=p+3;
+  return [three,three+Math.max(4,Math.ceil(p*.5))];
 }
 function updateLit(){const el=document.getElementById('lit');if(el&&L)el.textContent=state.lit.size+'/'+L.tiles.filter(t=>t.t==='bulb').length}
 function updateMoves(){$('#moves').textContent=moves;if(L&&L.limitMoves)$('#meter').classList.toggle('danger',L.limitMoves-moves<=2);
@@ -1874,7 +1880,7 @@ function updateMoves(){$('#moves').textContent=moves;if(L&&L.limitMoves)$('#mete
 function resize(){
   if(!L)return;const st=$('#stage').getBoundingClientRect();
   cs=Math.max(26,Math.floor(Math.min(st.width/(L.w+.84),st.height/(L.h+.84),92*UIS)));pad=Math.round(cs*.42);
-  dpr=Math.min(window.devicePixelRatio||1,3);
+  dpr=Math.min(window.devicePixelRatio||1,2);
   const W=cs*L.w+pad*2,H=cs*L.h+pad*2;
   cv.style.width=W+'px';cv.style.height=H+'px';cv.width=W*dpr;cv.height=H*dpr;
 }
@@ -2055,7 +2061,7 @@ $('#pauseBtn').onclick=openPause;
 function paintTimed(){const c=$('#timedChip');if(c)c.setAttribute('aria-checked',!!meta.timed)}
 $('#timedChip').onclick=()=>{meta.timed=!meta.timed;saveMeta();paintTimed();sfx.uiToggle(meta.timed)};
 paintTimed();
-document.addEventListener('visibilitychange',()=>{if(document.hidden)cloud.push();if(document.hidden&&L&&!$('#game').hidden&&!won&&$('#sheet').hidden)openPause()});
+document.addEventListener('visibilitychange',()=>{try{if(ac){if(document.hidden)ac.suspend();else if(soundOn||musicOn)ac.resume()}}catch(e){}if(document.hidden)cloud.push();if(document.hidden&&L&&!$('#game').hidden&&!won&&$('#sheet').hidden)openPause()});
 function paintHap(){$('#hap .wave').style.opacity=haptic.on?1:.15;$('#hap').setAttribute('aria-label',haptic.on?'Vibration on':'Vibration off')}
 $('#hap').onclick=()=>{haptic.on=!haptic.on;try{localStorage.setItem('livewire.haptics',haptic.on?'1':'0')}catch(e){}paintHap();if(haptic.on)haptic.go([20,40,20])};
 paintHap();
@@ -2278,8 +2284,14 @@ let kLink=null;   // {k, t0}
 const NEWKIND={11:t=>t.t==='alarm',21:t=>t.t==='switch'&&t.relay==null,31:t=>t.t==='source'&&t.c===2,41:t=>t.t==='bulb'&&t.need===3,51:t=>t.t==='bridge',
   61:t=>t.t==='wire'&&!!t.dio,71:t=>t.t==='source'&&t.c===4,81:t=>t.t==='coil'||(t.t==='switch'&&t.relay!=null),91:t=>t.t==='swap'};
 function linkPair(k){kLink={k,t0:performance.now()}}
+// Battery saver: draw every frame for a moment after a tap or while effects play, otherwise about 30 frames a second.
+let lastFrame=0,lastPoke=0;
+addEventListener('pointerdown',()=>{lastPoke=performance.now()},true);
 function draw(time){
   requestAnimationFrame(draw);
+  const busy=time-lastPoke<1600||particles.length||(lapT&&time-lapT<4500)||(L&&L.bootT&&time<L.bootT+2500)||(kLink&&time-kLink.t0<1700);
+  if(!busy&&time-lastFrame<28)return;
+  lastFrame=time;
   drawBg(time);
   if(!L||$('#game').hidden)return;
   if(L.timed&&!won&&t0&&!sideT&&!paused)paintRace((performance.now()-t0)/1000);
