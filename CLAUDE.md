@@ -36,8 +36,13 @@ satisfying to play, and fully offline.
   colour symbols, power-cut screen transitions, flow and surge animations.
 - Timed mode is optional (`meta.timed`), off by default. Gold time = `round(par*1.4+4)` seconds; hints void gold.
   Best times in `meta.best`, gold boards in `meta.gold`. Normal play has no time pressure: keep it that way.
-- Daily challenges are dense rather than big, keep the hardest of 3 qualifying candidates, and can be shared
+- Daily challenges are dense rather than big, tall and narrow (6-7 wide) so pieces stay large on phones, keep the hardest of 3 qualifying candidates, and can be shared
   as a text result card. Changing `CHALLENGES` or `buildDaily` changes the shared daily for everyone.
+- Collection: world themes (`THEMES`: Swamp, Tide Pool, Firefly Meadow, First Snow, Blossom, Starlight) with their own
+  palette, bulb charms (`charmUnder`/`charmOver`), empty-socket decorations (`decor`) and drifting ambience (`ambience`), string lights around the frame (`frameLights`),
+  unlocked by boards, stars, streaks, bosses, chests and gold medals; plus board colours (`SKINS`) for the Circuit theme.
+- Timed mode: bronze/silver/gold medals per board (`tiersFor`), a race bar with your best as a ghost marker; gold earns ⚡.
+- Menu: daily challenge card with NEW badge and countdown; NEW tags on boards and pieces that introduce a part.
 - Rewards: star chests every 30 stars, perfect streak (hint every 5), combos, confetti, pause menu, ambient music.
 - Full-screen overlays (win, sheets, confetti, transitions) are `position:fixed` so they cover iPads and desktops.
 - Sound is synthesised with Web Audio. Haptics go through one `haptic.go()` function.
@@ -69,6 +74,10 @@ Turn the prototype into a real iOS and Android app using Capacitor.
 - Replace `navigator.vibrate` with `@capacitor/haptics` (light impact for gear ticks,
   medium for connections, success notification for wins).
 - Save progress with `@capacitor/preferences` instead of localStorage.
+- Account saves: on claude.ai, progress syncs to the player's private `data/users/<id>/save` doc (`cloud` object).
+  Saves are always merged (`mergeSave`: best stars, best times, daily results, latest streak), never overwritten.
+  Backup codes (`LW1-` + base64 JSON) let players copy and restore progress anywhere. In the native app, replace
+  the claude.ai sync with Game Center / Google Play Games saved games or a small backend, reusing `mergeSave`.
 - Replace the claude.ai leaderboard with Game Center / Google Play Games or a small backend.
 - Make one change at a time, explain what changed in plain words, and commit to git
   after each working step.
