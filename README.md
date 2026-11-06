@@ -37,14 +37,30 @@ with no build step and no server.
   board 10. Difficulty is measured in real moves, so neighbouring boards stay close.
 - **Pieces:** wires, bolted wires, switches, bridges, alarms (buzzers), batteries in
   red, blue and green, bulbs that need an exact colour mix, swappers that change the
-  current's colour, diodes that only let current flow one way, and relays that close
+  current's colour (one colour at a time; mixed current stops at a swapper), diodes that only let current flow one way, and relays that close
   when their coil on another circuit gets power. Batteries, bulbs, alarms and coils
   connect only through their pins.
 - **Daily challenge.** One board for everyone in the world each day (UTC), in one of
   five types: Overload, Perfect Wiring, Against the Clock, Steady Hands and Colour
-  Storm. Each one is checked to be beatable under its own rules.
+  Storm. Daily boards are dense, late-game puzzles (the hardest of several candidates),
+  and each one is checked to be beatable under its own rules.
 - **Progress:** stars, nine ranks, daily streaks with streak freezes, board skins and
   sector colours that change as you advance.
+- **Timed mode (optional).** Off by default, so the normal game stays calm. Turn it on
+  to race a stopwatch on every board; beat the gold time for a ⚡ and climb the speed
+  leaderboard.
+- **Share your daily.** After the daily challenge, share a spoiler-free result card
+  (moves, time, tries, streak) as text.
+- **Collection.** Unlock little worlds for your board (Swamp, Tide Pool, Firefly Meadow, First Snow, Blossom,
+  Starlight), each with its own colours, charms on the bulbs and things drifting by. Board colours too.
+- **Rewards:** star chests every 30 stars (hints and streak freezes), a perfect streak
+  that earns a hint every 5 three-star boards, combo pop-ups when one tap lights
+  several bulbs, and confetti for rank-ups, sector clears and daily wins.
+- **Your progress follows you.** Opened from its claude.ai link while signed in, the game saves levels,
+  stars, streaks and stats to your account automatically. Anywhere else, Settings → Backup code gives you a
+  code to copy and restore on any device. Saves are merged, so restoring never loses progress.
+- **Pause menu** with quick settings; the board blurs and every clock stops.
+- **Ambient music**, synthesised like the sound effects, with its own on/off switch.
 - **Help when stuck:** undo, hints, a tap guide on the first boards, and a free hint
   after three restarts.
 - **Feel:** synthesised sound for every action (no audio files), current that flows
