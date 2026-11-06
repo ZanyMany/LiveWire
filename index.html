@@ -448,7 +448,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
   <section id="menu">
     <div class="menu-inner">
       <div class="menu-top">
-        <span class="ref">REV 1.19</span>
+        <span class="ref">REV 1.20</span>
         <div class="right">
           <button class="icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
           <button class="icon" id="hap" aria-label="Vibration on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path class="wave" d="M4 8v8M20 8v8"/></svg></button>
@@ -1014,7 +1014,7 @@ var cloud={doc:null,state:'off',at:0,t:0,busy:false,again:false,
     this.busy=false;paintCloud();if(this.again){this.again=false;this.push()}}};
 function paintCloud(){
   const t={off:'',sync:'☁ SYNCING',ok:'☁ SAVED',error:'☁ OFFLINE'}[cloud.state]||'';
-  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.19'+(t?' · '+t:'');
+  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.20'+(t?' · '+t:'');
   const c=document.getElementById('cloudLine');if(c)c.textContent=cloudText()}
 function cloudText(){return cloud.state==='ok'?`Saved to your account ✓ Last saved ${new Date(cloud.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Open the game signed in on any device and your progress follows you.`
   :cloud.state==='sync'?'Syncing with your account…'
@@ -2118,6 +2118,8 @@ function traces(mask,pmask,time,len){
     ctx.restore();
   }else for(const d of DIRS)if(mask&d)seg(d,len,tw*.26,`rgba(${HIRGB},.5)`);
 }
+// the moving white flow dashes, for any path already built on ctx (arches, switch levers)
+function flowDash(w,time){ctx.save();ctx.setLineDash([cs*.06,cs*.16]);ctx.lineDashOffset=reduce?0:-time*cs*.0012;ctx.lineWidth=w;ctx.strokeStyle='rgba(255,255,255,.75)';ctx.shadowBlur=0;ctx.stroke();ctx.restore()}
 // Every component sits in the same machined metal bezel, so the parts read as one family.
 // --- theme art: small, soft, never covering what the puzzle needs ---
 const hsh=(a,b)=>{const x=Math.sin(a*12.9898+b*78.233)*43758.5453;return x-Math.floor(x)};
@@ -2339,17 +2341,20 @@ function draw(time){
           ctx.lineWidth=w;ctx.strokeStyle=st;if(blur){ctx.shadowColor=st;ctx.shadowBlur=blur}ctx.stroke();ctx.shadowBlur=0};
         // under-cut so the arch reads as crossing over
         ctx.beginPath();ctx.arc(-g*.05,0,g+tw*.5,-Math.PI/2,Math.PI/2,true);ctx.lineWidth=tw*.9;ctx.strokeStyle=C.sock;ctx.stroke();
-        arch(tw,C.copper);if(vcol){arch(tw*.62,vcol,cs*.3)}
+        arch(tw,C.copper);if(vcol){arch(tw*.62,vcol,cs*.3);
+          for(const sy of[-1,1]){ctx.beginPath();ctx.moveTo(-g,0);ctx.arc(0,0,g,Math.PI,sy*Math.PI/2,sy>0);ctx.lineTo(0,sy*h);flowDash(tw*.22,time)}}
         ctx.restore();silk('J'+(++counters.J));break;}
       case 'switch':{
         socket(true);ctx.save();if(t.axis==='v')ctx.rotate(Math.PI/2);
         const p=t.on?(P[i+',0']||0):0,col=colOf(p),tw=cs*.15,h=cs/2,pv=cs*.2;
         ctx.lineCap='round';
         for(const sx of[-1,1]){ctx.beginPath();ctx.moveTo(sx*h,0);ctx.lineTo(sx*pv,0);ctx.lineWidth=tw;ctx.strokeStyle=C.copper;ctx.stroke();
-          if(col){ctx.save();ctx.shadowColor=col;ctx.shadowBlur=cs*.3;ctx.lineWidth=tw*.62;ctx.strokeStyle=col;ctx.stroke();ctx.restore()}}
+          if(col){ctx.save();ctx.shadowColor=col;ctx.shadowBlur=cs*.3;ctx.lineWidth=tw*.62;ctx.strokeStyle=col;ctx.stroke();ctx.restore();
+            ctx.beginPath();ctx.moveTo(sx*pv,0);ctx.lineTo(sx*h,0);flowDash(tw*.22,time)}}
         const ang=t.on?0:-0.65;t.lev=t.lev==null?ang:t.lev+(ang-t.lev)*(reduce?1:.3);
         ctx.save();ctx.translate(-pv,0);ctx.rotate(t.lev);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(pv*2,0);
-        ctx.lineWidth=tw*.8;ctx.strokeStyle=col||(t.on?C.copperHi:'#d8c9b4');if(col){ctx.shadowColor=col;ctx.shadowBlur=cs*.3}ctx.stroke();ctx.restore();
+        ctx.lineWidth=tw*.8;ctx.strokeStyle=col||(t.on?C.copperHi:'#d8c9b4');if(col){ctx.shadowColor=col;ctx.shadowBlur=cs*.3}ctx.stroke();
+        if(col){ctx.beginPath();ctx.moveTo(pv,0);ctx.lineTo(0,0);flowDash(tw*.2,time);ctx.beginPath();ctx.moveTo(pv,0);ctx.lineTo(pv*2,0);flowDash(tw*.2,time)}ctx.restore();
         for(const sx of[-1,1]){ctx.beginPath();ctx.arc(sx*pv,0,tw*.55,0,7);ctx.fillStyle=C.copperHi;ctx.fill()}
         ctx.restore();
         ctx.font=`700 ${Math.max(7,cs*.12)}px JetBrains Mono,monospace`;ctx.textAlign='right';ctx.textBaseline='bottom';
