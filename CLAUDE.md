@@ -32,6 +32,8 @@ satisfying to play, and fully offline.
 - Daily challenge: same board for everyone each UTC day, five challenge types. Steady Hands
   boards are verified with a solver so they can be beaten without a mistake.
 - Par counts only the pieces the real solution uses (decoy wires excluded).
+- Clear view (`meta.clear`, Settings and pause menu): hides part labels, 9V/ON/OFF text, frame letters, screws, serial,
+  frame lights, theme decor and the moving background in game, and slims the frame so pieces grow ~10%. Relay K tags stay.
 - Extras: undo, hints, tutorial pointer, ranks, streak freezes, board skins, sector colours,
   colour symbols, power-cut screen transitions, flow and surge animations.
 - Timed mode is optional (`meta.timed`), off by default. Gold time = `round(par*1.4+4)` seconds; hints void gold.
