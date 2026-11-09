@@ -279,7 +279,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
 .pzgo{display:flex!important;align-items:center;justify-content:center;gap:10px;font-size:18px!important;padding:15px!important}
 .pzgo svg{width:16px;height:16px;fill:currentColor}
 .btns2 .btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;margin-right:6px}
-.pzq{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:2px}
+.pzq{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));grid-auto-flow:column;gap:8px;margin-top:2px}
 .qt{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 2px 8px;border-radius:12px;border:1px solid rgba(207,220,214,.12);background:rgba(0,0,0,.18);color:var(--silk-dim);font-size:11px;font-weight:600}
 .qt svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .qt[aria-pressed="true"]{color:var(--silk);border-color:color-mix(in srgb,var(--accent) 60%,transparent);background:color-mix(in srgb,var(--accent) 16%,transparent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 25%,transparent)}
@@ -448,7 +448,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
   <section id="menu">
     <div class="menu-inner">
       <div class="menu-top">
-        <span class="ref">REV 1.25</span>
+        <span class="ref">REV 1.26</span>
         <div class="right">
           <button class="icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
           <button class="icon" id="hap" aria-label="Vibration on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path class="wave" d="M4 8v8M20 8v8"/></svg></button>
@@ -1017,7 +1017,7 @@ var cloud={doc:null,state:'off',at:0,t:0,busy:false,again:false,
     this.busy=false;paintCloud();if(this.again){this.again=false;this.push()}}};
 function paintCloud(){
   const t={off:'',sync:'☁ SYNCING',ok:'☁ SAVED',error:'☁ OFFLINE'}[cloud.state]||'';
-  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.25'+(t?' · '+t:'');
+  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.26'+(t?' · '+t:'');
   const c=document.getElementById('cloudLine');if(c)c.textContent=cloudText()}
 function cloudText(){return cloud.state==='ok'?`Saved to your account ✓ Last saved ${new Date(cloud.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Open the game signed in on any device and your progress follows you.`
   :cloud.state==='sync'?'Syncing with your account…'
@@ -1460,7 +1460,7 @@ function openPause(){
   pauseGame();
   const nb=L.tiles.filter(t=>t.t==='bulb').length,tg=L.tg,st=tg?(moves<=tg[0]?3:moves<=tg[1]?2:1):0;
   const el=L.timed&&t0?(pauseT-t0)/1000:null;
-  const ic={sound:'<path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 010 6"/>',music:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
+  const ic={clear:'<path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',sound:'<path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 010 6"/>',music:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
     haptics:'<rect x="8" y="3" width="8" height="18" rx="2"/><path d="M4 8v8M20 8v8"/>',timed:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2h4"/>'};
   const qt=(k,label,on)=>`<button class="qt" aria-pressed="${!!on}" data-k="${k}"><svg viewBox="0 0 24 24">${ic[k]}</svg>${label}</button>`;
   openSheet('Paused',`<div class="pzc"><i class="scr" style="left:10px;top:10px"></i><i class="scr" style="right:10px;top:10px"></i><i class="scr" style="left:10px;bottom:10px"></i><i class="scr" style="right:10px;bottom:10px"></i>
@@ -1472,7 +1472,7 @@ function openPause(){
     <div class="btns2" style="margin-top:0"><button class="btn" id="pzRestart"><svg viewBox="0 0 24 24"><path d="M19 12.5A7 7 0 1 1 16.9 7"/><path d="M17.6 3.4v4.2h-4.2"/></svg>Restart</button>
       <button class="btn" id="pzMenu"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/></svg>Menu</button></div>
     ${DEV.on?`<div class="btns2" style="margin-top:0"><button class="btn" id="pzSolve">🛠 Solve</button><button class="btn" disabled>Min ${par} · 3★ ≤ ${tg?tg[0]:par}</button></div>`:''}
-    <div class="pzq">${qt('sound','Sound',soundOn)}${qt('music','Music',musicOn)}${qt('haptics','Vibrate',haptic.on)}${L.daily?'':qt('timed','Timed',meta.timed)}</div>
+    <div class="pzq">${qt('sound','Sound',soundOn)}${qt('music','Music',musicOn)}${qt('haptics','Vibrate',haptic.on)}${qt('clear','Clear',meta.clear)}${L.daily?'':qt('timed','Timed',meta.timed)}</div>
     <p class="pznote">${L.daily?'The clock is stopped. ':''}Tap outside the panel to resume${L&&!L.daily?' · Timed mode applies from the next board':''}</p></div>`,()=>{
     $('#sheet').classList.add('pzm');$('.pzc h4').textContent=L.name||'';
     const quit=()=>{paused=false;$('#stage').classList.remove('paused');$('#sheet').hidden=true;$('#sheet').classList.remove('pzm')};
@@ -1492,8 +1492,9 @@ function bindToggles(redraw){document.querySelectorAll('.setrow,.qt').forEach(b=
   if(k==='music'){setMusic(!musicOn);sfx.uiToggle(musicOn)}
   if(k==='timed'){meta.timed=!meta.timed;saveMeta();paintTimed();sfx.uiToggle(meta.timed)}
   if(k==='symbols'){meta.symbols=!meta.symbols;saveMeta();sfx.uiToggle(meta.symbols)}
+  if(k==='clear'){meta.clear=!meta.clear;saveMeta();sfx.uiToggle(meta.clear);resize();bgLast=0}
   // flip the switch in place (no re-opening the panel, so nothing flashes)
-  const on={sound:soundOn,music:musicOn,haptics:haptic.on,timed:!!meta.timed,symbols:!!meta.symbols}[k];
+  const on={sound:soundOn,music:musicOn,haptics:haptic.on,timed:!!meta.timed,symbols:!!meta.symbols,clear:!!meta.clear}[k];
   document.querySelectorAll(`.setrow[data-k="${k}"],.qt[data-k="${k}"]`).forEach(x=>x.setAttribute(x.classList.contains('qt')?'aria-pressed':'aria-checked',on))})}
 $('#sheetClose').onclick=closeSheet;
 $('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet()});
@@ -1555,6 +1556,7 @@ function openSettings(){
   openSheet('Settings',row('sound','Sound','Clicks, crackles and chimes',soundOn)+row('music','Music','Soft ambient music while you play',musicOn)
     +row('haptics','Vibration','Ticks and buzzes on supported Android phones',haptic.on)
     +row('timed','Timed mode','Race a bar to bronze, silver and gold medals on every board. Gold earns a ⚡ for the speed leaderboard. Daily challenges keep their own rules.',!!meta.timed)
+    +row('clear','Clear view','Just the puzzle: bigger pieces, no labels, frame print or moving background',!!meta.clear)
     +row('symbols','Colour symbols','Letters on batteries and bulbs (R, B, G, P, Y, C, W) for colour-blind play',!!meta.symbols)
     +`<div class="sh-label"><span>YOUR PROGRESS</span><span></span></div><p class="lbnote" id="cloudLine"></p>
       <div class="btns2"><button class="btn" id="bkBtn">Backup code</button><button class="btn" id="rsBtn">Restore</button></div>`
@@ -1763,7 +1765,7 @@ let bgLast=0;
 function drawBg(t){
   const inGame=$('#menu').hidden;if(inGame&&$('#game').hidden)return;
   if(t-bgLast<(inGame?62:30))return;bgLast=t;   // slow drifting traces: ~15 fps behind a board, ~30 on the menu
-  bctx.clearRect(0,0,bgW,bgH);bctx.save();if(inGame){bctx.globalAlpha=.42;t*=.5}
+  bctx.clearRect(0,0,bgW,bgH);if(inGame&&clearView())return;bctx.save();if(inGame){bctx.globalAlpha=.42;t*=.5}
   bctx.lineCap='round';bctx.lineJoin='round';
   for(const q of paths){
     bctx.beginPath();q.p.forEach(([x,y],k)=>k?bctx.lineTo(x,y):bctx.moveTo(x,y));
@@ -1907,9 +1909,11 @@ function updateMoves(){$('#moves').textContent=moves;if(L&&L.limitMoves)$('#mete
     $('#sg').setAttribute('aria-label',`${st} star${st>1?'s':''} so far`+(left>=0?`, ${left} moves left to keep them`:''))}}
 
 /* ---------- sizing ---------- */
+const clearView=()=>!!(meta&&meta.clear);   // Clear view: just the puzzle, no labels, frame print or moving background
 function resize(){
   if(!L)return;const st=$('#stage').getBoundingClientRect();
-  cs=Math.max(26,Math.floor(Math.min(st.width/(L.w+.84),st.height/(L.h+.84),92*UIS)));pad=Math.round(cs*.42);
+  const fr=clearView()?.3:.84;
+  cs=Math.max(26,Math.floor(Math.min(st.width/(L.w+fr),st.height/(L.h+fr),92*UIS)));pad=Math.round(cs*fr/2);
   dpr=Math.min(window.devicePixelRatio||1,2);
   const W=cs*L.w+pad*2,H=cs*L.h+pad*2;
   cv.style.width=W+'px';cv.style.height=H+'px';cv.width=W*dpr;cv.height=H*dpr;
@@ -2192,7 +2196,7 @@ function shell(x,y,r,rot,a){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.gl
 function grass(x,y,h,a,col){ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=col;ctx.lineWidth=Math.max(.8,h*.09);ctx.lineCap='round';
   for(const [dx,lean] of [[-h*.2,-.35],[0,.05],[h*.2,.4]]){ctx.beginPath();ctx.moveTo(x+dx,y);ctx.quadraticCurveTo(x+dx+lean*h*.2,y-h*.6,x+dx+lean*h*.6,y-h);ctx.stroke()}ctx.restore()}
 // a decoration in some empty sockets (seeded, so a board always looks the same)
-function decor(i,time){const id=THEME.id;if(id==='circuit')return;const r=hsh(i,(L&&L.idx||0)+3)*.75;if(r>.42)return;
+function decor(i,time){const id=THEME.id;if(id==='circuit'||clearView())return;const r=hsh(i,(L&&L.idx||0)+3)*.75;if(r>.42)return;
   const a=hsh(i,7)*6.28,u=(hsh(i,11)-.5)*cs*.3,v=(hsh(i,13)-.5)*cs*.3,t=time/1000;
   if(id==='swamp'){if(r<.16)lilypad(u,v,cs*.2,a,.75);else{leaf(u,v,cs*.34,a,'#5aa055',.7);if(r<.3)leaf(u+cs*.1,v+cs*.06,cs*.24,a+1.2,'#7cbf5c',.55)}}
   else if(id==='tide'){if(r<.14)shell(u,v,cs*.15,a,.85);else if(r<.28){ctx.save();ctx.globalAlpha=.5;ctx.fillStyle='#6b8a96';ctx.beginPath();ctx.ellipse(u,v,cs*.1,cs*.07,a,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(u+cs*.12,v+cs*.05,cs*.06,cs*.045,a,0,7);ctx.fill();ctx.restore()}
@@ -2253,7 +2257,7 @@ function socket(locked){const s=cs*.46,r=cs*.12;ctx.beginPath();ctx.roundRect(-s
   ctx.lineWidth=1;ctx.strokeStyle=locked?'rgba(207,220,214,.22)':'rgba(207,220,214,.07)';ctx.stroke();
   if(locked){ctx.fillStyle='rgba(207,220,214,.35)';for(const[a,b]of[[-1,-1],[1,-1],[1,1],[-1,1]]){
     ctx.beginPath();ctx.arc(a*s*.72,b*s*.72,cs*.035,0,7);ctx.fill()}}}
-function silk(txt){ctx.font=`500 ${Math.max(7,cs*.12)}px ${'JetBrains Mono'},monospace`;ctx.fillStyle='rgba(207,220,214,.45)';
+function silk(txt){if(clearView())return;ctx.font=`500 ${Math.max(7,cs*.12)}px ${'JetBrains Mono'},monospace`;ctx.fillStyle='rgba(207,220,214,.45)';
   ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(txt,-cs*.44,-cs*.45)}
 
 // PCB outline: edge plate, mounting holes, grid coordinates and a title block, like a real board.
@@ -2261,7 +2265,7 @@ function silk(txt){ctx.font=`500 ${Math.max(7,cs*.12)}px ${'JetBrains Mono'},mon
 const FLIGHTS={swamp:{cols:['#7dffa0','#4fdc7a','#b6ff8a'],sp:1.25,mode:'glow'},tide:{cols:['#4fd1e0','#3fa9ff','#8fe8ff'],sp:.9,mode:'wave'},
   meadow:{cols:['#ffd36b','#ffe8a0'],sp:1.5,mode:'lantern'},snow:{cols:['#ff4d4d','#3ddc84','#ff4d4d','#3ddc84','#ffd36b'],sp:.8,mode:'xmas'},
   blossom:{cols:['#ff9fc4','#fff0e0'],sp:1.1,mode:'glow'},starlight:{cols:['#d6d1ff','#ffffff','#b9a6ff'],sp:1,mode:'twinkle'}};
-function frameLights(time){const F=FLIGHTS[THEME.id];if(!F)return;
+function frameLights(time){const F=FLIGHTS[THEME.id];if(!F||clearView())return;
   // one light on each little tick mark between the row and column labels, so they never cover the labels
   const W=cs*L.w,H=cs*L.h,m=pad*.86,t=time/1000,pts=[];
   for(let k=1;k<L.w;k++)pts.push([k*cs,-m,0,1]);
@@ -2291,6 +2295,7 @@ function drawFrame(){
   ctx.beginPath();ctx.roundRect(-m,-m,W+2*m,H+2*m,cs*.24);ctx.fillStyle=C.sock;ctx.globalAlpha=.6;ctx.fill();ctx.globalAlpha=1;
   ctx.lineWidth=1.5;ctx.strokeStyle=`rgba(${HIRGB},.4)`;ctx.stroke();
   ctx.beginPath();ctx.roundRect(-2,-2,W+4,H+4,cs*.16);ctx.fillStyle=C.board;ctx.fill();
+  if(clearView()){ctx.restore();return}
   for(const[x,y]of[[-o,-o],[W+o,-o],[-o,H+o],[W+o,H+o]]){
     ctx.beginPath();ctx.arc(x,y,pad*.24,0,7);ctx.fillStyle=`rgba(${HIRGB},.85)`;ctx.fill();
     ctx.beginPath();ctx.arc(x,y,pad*.12,0,7);ctx.fillStyle=C.board;ctx.fill()}
@@ -2343,7 +2348,7 @@ function draw(time){
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cv.width,cv.height);
   const P=visPower(time),counters={V:0,L:0,SW:0,AL:0,J:0,SX:0,D:0};
   ctx.translate(pad,pad);drawFrame();frameLights(time);
-  if(THEME.amb&&!reduce){ctx.save();ctx.beginPath();ctx.rect(0,0,L.w*cs,L.h*cs);ctx.clip();ctx.globalAlpha=.85;ambience(ctx,L.w*cs,L.h*cs,time/1000+7);ctx.restore()}
+  if(THEME.amb&&!reduce&&!clearView()){ctx.save();ctx.beginPath();ctx.rect(0,0,L.w*cs,L.h*cs);ctx.clip();ctx.globalAlpha=.85;ambience(ctx,L.w*cs,L.h*cs,time/1000+7);ctx.restore()}
   L.tiles.forEach((t,i)=>{
     const x=i%L.w,y=Math.floor(i/L.w);
     ctx.save();ctx.translate((x+.5)*cs,(y+.5)*cs);FI=i;FCH=0;FROT=0;
@@ -2417,7 +2422,7 @@ function draw(time){
           ctx.beginPath();ctx.roundRect(-cs*.43,-cs*.43,cs*.86,cs*.86,cs*.12);ctx.stroke();ctx.restore();
           ctx.fillStyle=kc;ctx.fillText(t.on?'CLOSED':'OPEN',cs*.43,cs*.45);
           ktag(t.relay,t.on,hl);
-        }else{ctx.fillStyle=t.on?'rgba(207,220,214,.55)':C.amber;ctx.fillText(t.on?'ON':'OFF',cs*.43,cs*.45);
+        }else if(!clearView()){ctx.fillStyle=t.on?'rgba(207,220,214,.55)':C.amber;ctx.fillText(t.on?'ON':'OFF',cs*.43,cs*.45);
         silk('SW'+(++counters.SW))}break;}
       case 'coil':{   // converter: a little transformer box that closes relay K when it gets power of any colour
         const got=P[i+',0']||0,on=!!got,hl=kLink&&kLink.k===t.k&&time-kLink.t0<1600,R=cs*.3;
@@ -2466,7 +2471,7 @@ function draw(time){
         ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
         ctx.save();ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=cs*.04;
         ctx.font=`700 ${R*.92}px Chakra Petch,sans-serif`;ctx.fillText('+',0,-R*.1);ctx.restore();
-        ctx.font=`700 ${R*.3}px JetBrains Mono,monospace`;ctx.globalAlpha=.9;ctx.fillText(meta.symbols?SYM[t.c]:'9V',0,R*.48);ctx.globalAlpha=1;
+        ctx.font=`700 ${R*.3}px JetBrains Mono,monospace`;ctx.globalAlpha=.9;if(meta.symbols||!clearView())ctx.fillText(meta.symbols?SYM[t.c]:'9V',0,R*.48);ctx.globalAlpha=1;
         silk('B'+(++counters.V));break;}
       case 'bulb':{
         const got=P[i+',0']||0,lit=got===t.need,bad=!!got&&!lit,col=C[t.need],R=cs*.3;
