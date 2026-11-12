@@ -438,6 +438,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
 .rewards span:nth-child(2){animation-delay:.15s}.rewards span:nth-child(3){animation-delay:.3s}
 @keyframes popin{from{opacity:0;transform:translateY(8px) scale(.8)}}
 @media (prefers-reduced-motion:reduce){.pop,.chestopen .lid,.rewards span,.chest.ready{animation:none}.pop{opacity:0}}
+.meter .st3{color:#f2b544;letter-spacing:0;font-size:.95em}
 </style>
 </head>
 <body>
@@ -448,7 +449,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
   <section id="menu">
     <div class="menu-inner">
       <div class="menu-top">
-        <span class="ref">REV 1.26</span>
+        <span class="ref">REV 1.27</span>
         <div class="right">
           <button class="icon" id="gear" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
           <button class="icon" id="hap" aria-label="Vibration on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="2"/><path class="wave" d="M4 8v8M20 8v8"/></svg></button>
@@ -540,7 +541,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
       <div class="ref" id="wref">BOARD 01 · CLEARED</div>
       <h2 id="wtitle">All lit</h2>
       <div class="bigstars"><i></i><i></i><i></i></div>
-      <div class="meter"><span>MOVES <b id="wmoves">0</b></span><span><span id="wparL">TARGET</span> <b id="wpar">0</b></span></div>
+      <div class="meter"><span>MOVES <b id="wmoves">0</b></span><span><span id="wparL">BEST</span> <b id="wpar">0</b></span><span id="wst3" hidden><span class="st3" aria-label="three stars">★★★</span> <b id="wtg">0</b></span></div>
       <div class="wextra" id="wextra"></div>
       <div class="btns"><button class="btn wmenu" id="wMenu" aria-label="Main menu"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/></svg></button><button class="btn" id="replay">Replay</button><button class="btn" id="shareBtn" hidden>Share</button><button class="btn primary" id="next">Next board</button></div>
     </div>
@@ -1017,7 +1018,7 @@ var cloud={doc:null,state:'off',at:0,t:0,busy:false,again:false,
     this.busy=false;paintCloud();if(this.again){this.again=false;this.push()}}};
 function paintCloud(){
   const t={off:'',sync:'☁ SYNCING',ok:'☁ SAVED',error:'☁ OFFLINE'}[cloud.state]||'';
-  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.26'+(t?' · '+t:'');
+  const r=document.querySelector('.menu-top .ref');if(r)r.textContent='REV 1.27'+(t?' · '+t:'');
   const c=document.getElementById('cloudLine');if(c)c.textContent=cloudText()}
 function cloudText(){return cloud.state==='ok'?`Saved to your account ✓ Last saved ${new Date(cloud.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Open the game signed in on any device and your progress follows you.`
   :cloud.state==='sync'?'Syncing with your account…'
@@ -2009,7 +2010,7 @@ function fail(reason){
     setTimeout(()=>{
       $('#wref').textContent='DAILY CHALLENGE · FAILED';
       $('#wtitle').textContent={moves:'Out of moves',time:'Time\u2019s up',alarm:'Alarm tripped',colour:'Wrong colour'}[reason];
-      $('.bigstars').hidden=true;$('#wmoves').textContent=moves;$('#wparL').textContent=L.limitMoves?'LIMIT':'PAR';$('#wpar').textContent=L.limitMoves||par;
+      $('.bigstars').hidden=true;$('#wmoves').textContent=moves;$('#wparL').textContent=L.limitMoves?'LIMIT':'PAR';$('#wpar').textContent=L.limitMoves||par;$('#wst3').hidden=true;
       const wx=$('#wextra');wx.innerHTML='';const d=document.createElement('div');
       d.textContent=`Same board, same rules. Try ${(meta.daily.tries[L.daily]||0)+1} is ready.`;wx.appendChild(d);
       $('#next').textContent='Menu';$('#replay').textContent='Try again';$('#shareBtn').hidden=true;$('#wMenu').hidden=true;$('#win').hidden=false;
@@ -2077,7 +2078,8 @@ function winSeq(){
   setTimeout(()=>{
     $('#wref').textContent=L.daily?'DAILY BOARD · CLEARED':'BOARD '+String(L.idx+1).padStart(2,'0')+' · CLEARED';
     $('#wtitle').textContent=['','Powered up','Clean wiring','Perfect circuit'][stars];
-    $('#wmoves').textContent=moves;$('#wparL').textContent=L.daily?'PAR':'3★ TARGET';$('#wpar').textContent=tg[0];
+    $('#wmoves').textContent=moves;$('#wparL').textContent=L.daily?'PAR':'BEST';$('#wpar').textContent=L.daily?tg[0]:par;
+    $('#wst3').hidden=!!L.daily;$('#wtg').textContent='≤ '+tg[0];
     const wx=$('#wextra');wx.innerHTML='';
     if(L.medalWon){const m=document.createElement('div');m.className='medal';m.style.setProperty('--mc',MEDALS[L.medalWon][1]);m.textContent=MEDALS[L.medalWon][0];m.style.margin='0 auto 6px';m.style.border='0';m.style.padding='0';wx.appendChild(m);setTimeout(()=>sfx.star(2),400)}
     extras.forEach(t=>{const d=document.createElement('div');d.textContent=t;wx.appendChild(d)});
