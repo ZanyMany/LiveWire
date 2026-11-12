@@ -438,7 +438,13 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
 .rewards span:nth-child(2){animation-delay:.15s}.rewards span:nth-child(3){animation-delay:.3s}
 @keyframes popin{from{opacity:0;transform:translateY(8px) scale(.8)}}
 @media (prefers-reduced-motion:reduce){.pop,.chestopen .lid,.rewards span,.chest.ready{animation:none}.pop{opacity:0}}
-.meter .st3{color:#f2b544;letter-spacing:0;font-size:.95em}
+.wstats{display:flex;justify-content:center;margin:2px auto 4px;width:100%;max-width:270px}
+.wstats>div{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:2px 6px}
+.wstats>div+div{border-left:1px solid rgba(255,255,255,.12)}
+.wstats>div[hidden]{display:none}
+.wstats b{font:700 calc(26px*var(--s,1))/1 var(--display);color:var(--silk,#e9f0ec);font-variant-numeric:tabular-nums}
+.wstats span{font-size:calc(12px*var(--s,1));font-weight:600;color:var(--silk-dim);letter-spacing:.02em;white-space:nowrap}
+.wstats .st3{font-style:normal;color:#f2b544;letter-spacing:-.04em}
 </style>
 </head>
 <body>
@@ -541,7 +547,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-rad
       <div class="ref" id="wref">BOARD 01 · CLEARED</div>
       <h2 id="wtitle">All lit</h2>
       <div class="bigstars"><i></i><i></i><i></i></div>
-      <div class="meter"><span>MOVES <b id="wmoves">0</b></span><span><span id="wparL">BEST</span> <b id="wpar">0</b></span><span id="wst3" hidden><span class="st3" aria-label="three stars">★★★</span> <b id="wtg">0</b></span></div>
+      <div class="wstats"><div><b id="wmoves">0</b><span>Moves</span></div><div><b id="wpar">0</b><span id="wparL">Best</span></div><div id="wst3" hidden><b id="wtg">0</b><span>for <i class="st3" aria-label="three stars">★★★</i></span></div></div>
       <div class="wextra" id="wextra"></div>
       <div class="btns"><button class="btn wmenu" id="wMenu" aria-label="Main menu"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/></svg></button><button class="btn" id="replay">Replay</button><button class="btn" id="shareBtn" hidden>Share</button><button class="btn primary" id="next">Next board</button></div>
     </div>
@@ -2010,7 +2016,7 @@ function fail(reason){
     setTimeout(()=>{
       $('#wref').textContent='DAILY CHALLENGE · FAILED';
       $('#wtitle').textContent={moves:'Out of moves',time:'Time\u2019s up',alarm:'Alarm tripped',colour:'Wrong colour'}[reason];
-      $('.bigstars').hidden=true;$('#wmoves').textContent=moves;$('#wparL').textContent=L.limitMoves?'LIMIT':'PAR';$('#wpar').textContent=L.limitMoves||par;$('#wst3').hidden=true;
+      $('.bigstars').hidden=true;$('#wmoves').textContent=moves;$('#wparL').textContent=L.limitMoves?'Limit':'Par';$('#wpar').textContent=L.limitMoves||par;$('#wst3').hidden=true;
       const wx=$('#wextra');wx.innerHTML='';const d=document.createElement('div');
       d.textContent=`Same board, same rules. Try ${(meta.daily.tries[L.daily]||0)+1} is ready.`;wx.appendChild(d);
       $('#next').textContent='Menu';$('#replay').textContent='Try again';$('#shareBtn').hidden=true;$('#wMenu').hidden=true;$('#win').hidden=false;
@@ -2078,8 +2084,8 @@ function winSeq(){
   setTimeout(()=>{
     $('#wref').textContent=L.daily?'DAILY BOARD · CLEARED':'BOARD '+String(L.idx+1).padStart(2,'0')+' · CLEARED';
     $('#wtitle').textContent=['','Powered up','Clean wiring','Perfect circuit'][stars];
-    $('#wmoves').textContent=moves;$('#wparL').textContent=L.daily?'PAR':'BEST';$('#wpar').textContent=L.daily?tg[0]:par;
-    $('#wst3').hidden=!!L.daily;$('#wtg').textContent='≤ '+tg[0];
+    $('#wmoves').textContent=moves;$('#wparL').textContent=L.daily?'Par':'Best';$('#wpar').textContent=L.daily?tg[0]:par;
+    $('#wst3').hidden=!!L.daily;$('#wtg').textContent=tg[0];
     const wx=$('#wextra');wx.innerHTML='';
     if(L.medalWon){const m=document.createElement('div');m.className='medal';m.style.setProperty('--mc',MEDALS[L.medalWon][1]);m.textContent=MEDALS[L.medalWon][0];m.style.margin='0 auto 6px';m.style.border='0';m.style.padding='0';wx.appendChild(m);setTimeout(()=>sfx.star(2),400)}
     extras.forEach(t=>{const d=document.createElement('div');d.textContent=t;wx.appendChild(d)});
